@@ -102,11 +102,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
-
 #if defined(POINTING_DEVICE_ENABLE) && defined(POINTING_DEVICE_AUTO_MOUSE_ENABLE)
 void pointing_device_init_user(void) {
-    set_auto_mouse_layer(LAYER_POINTER);  // use your pointer layer
-    set_auto_mouse_enable(true);          // MUST be enabled to work
+    set_auto_mouse_layer(LAYER_POINTER); // use your pointer layer
+    set_auto_mouse_enable(true);         // MUST be enabled to work
 }
 #endif
 
@@ -121,6 +120,26 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #endif     // POINTING_DEVICE_ENABLE
 
 #ifdef RGB_MATRIX_ENABLE
-// Forward-declare this helper function since it is defined in rgb_matrix.c.
-void rgb_matrix_update_pwm_buffers(void);
-#endif
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    uint8_t top = get_highest_layer(layer_state | default_layer_state);
+
+    if (top == LAYER_POINTER) {
+        // White = saturation 0; keep current brightness
+        hsv_t hsv = {.h = 0, .s = 0, .v = rgb_matrix_get_val()};
+        rgb_t rgb = hsv_to_rgb(hsv);
+
+        for (uint8_t i = led_min; i < led_max; i++) {
+            // Paint every LED; if you only want key LEDs, wrap this in:
+            // if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_KEYLIGHT)) { ... }
+            rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+        }
+
+        // Return true to fully override the active RGB effect with solid white.
+        // If you'd rather let the running effect keep animating, return false.
+        return true;
+    }
+
+    // Not on the pointer layer → don’t interfere with effects/other indicators
+    return false;
+}
+#endif // RGB_MATRIX_ENABLE
