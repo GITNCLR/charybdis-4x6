@@ -16,14 +16,31 @@
  */
 #pragma once
 
-// Safely override the global brightness limit
-#undef RGB_MATRIX_MAXIMUM_BRIGHTNESS
+// --- Brightness cap ---
+#ifdef RGB_MATRIX_MAXIMUM_BRIGHTNESS
+#    undef RGB_MATRIX_MAXIMUM_BRIGHTNESS
+#endif
 #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 200
 
-// Set default solid red lighting
+// --- Default mode/color (solid red) ---
+#ifdef RGB_MATRIX_DEFAULT_MODE
+#    undef RGB_MATRIX_DEFAULT_MODE
+#endif
 #define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_SOLID_COLOR
+
+#ifdef RGB_MATRIX_DEFAULT_HUE
+#    undef RGB_MATRIX_DEFAULT_HUE
+#endif
 #define RGB_MATRIX_DEFAULT_HUE 0
+
+#ifdef RGB_MATRIX_DEFAULT_SAT
+#    undef RGB_MATRIX_DEFAULT_SAT
+#endif
 #define RGB_MATRIX_DEFAULT_SAT 255
+
+#ifdef RGB_MATRIX_DEFAULT_VAL
+#    undef RGB_MATRIX_DEFAULT_VAL
+#endif
 #define RGB_MATRIX_DEFAULT_VAL 255
 
 #ifdef VIA_ENABLE
