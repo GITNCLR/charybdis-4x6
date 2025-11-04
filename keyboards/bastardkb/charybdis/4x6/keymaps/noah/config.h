@@ -16,8 +16,15 @@
  */
 #pragma once
 
+// Safely override the global brightness limit
 #undef RGB_MATRIX_MAXIMUM_BRIGHTNESS
 #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 200
+
+// Set default solid red lighting
+#define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_SOLID_COLOR
+#define RGB_MATRIX_DEFAULT_HUE 0
+#define RGB_MATRIX_DEFAULT_SAT 255
+#define RGB_MATRIX_DEFAULT_VAL 255
 
 #ifdef VIA_ENABLE
 /* VIA configuration. */
