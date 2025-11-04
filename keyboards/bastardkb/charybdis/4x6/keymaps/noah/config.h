@@ -43,6 +43,17 @@
 #endif
 #define RGB_MATRIX_DEFAULT_VAL RGB_MATRIX_MAXIMUM_BRIGHTNESS
 
+// --- RGB matrix split configuration ---
+#ifdef RGB_MATRIX_SPLIT
+#    undef RGB_MATRIX_SPLIT
+#endif
+#define RGB_MATRIX_SPLIT
+
+#ifdef SPLIT_LAYER_STATE_ENABLE
+#    undef SPLIT_LAYER_STATE_ENABLE
+#endif
+#define SPLIT_LAYER_STATE_ENABLE
+
 #ifdef VIA_ENABLE
 /* VIA configuration. */
 #    define DYNAMIC_KEYMAP_LAYER_COUNT 4
