@@ -79,3 +79,8 @@
 // Enable automatic mouse movement when on the pointer layer.
 #    define POINTING_DEVICE_AUTO_MOUSE_ENABLE
 #endif // POINTING_DEVICE_ENABLE
+
+#ifdef AUTO_MOUSE_TIME
+#    undef AUTO_MOUSE_TIME
+#endif
+#define AUTO_MOUSE_TIME 1500
