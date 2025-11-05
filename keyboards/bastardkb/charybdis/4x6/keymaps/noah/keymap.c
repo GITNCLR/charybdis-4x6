@@ -121,37 +121,8 @@ void pointing_device_init_user(void) {
 #endif // POINTING_DEVICE_ENABLE
 
 #ifdef RGB_MATRIX_ENABLE
-// Treat both OS Caps Lock and QMK Caps Word as "caps active"
-static inline bool caps_is_active(void) {
-#    ifdef CAPS_WORD_ENABLE
-    extern bool is_caps_word_on(void);
-    if (is_caps_word_on()) return true;
-#    endif
-    return host_keyboard_led_state().caps_lock;
-}
-
-// --- Caps Lock indicator: support multiple LED indices ---
-#    define CAPS_LED_COUNT 3
-static const uint8_t CAPS_LED_INDICES[CAPS_LED_COUNT] = {1, 5, 7}; // edit this list to your desired LEDs
-
-static inline void paint_caps_yellow_if_on(uint8_t led_min, uint8_t led_max) {
-    if (!caps_is_active()) return;
-    hsv_t caps_hsv = {.h = 43, .s = 255, .v = rgb_matrix_get_val()}; // yellow at current brightness
-    rgb_t caps_rgb = hsv_to_rgb(caps_hsv);
-    for (uint8_t i = 0; i < CAPS_LED_COUNT; i++) {
-        uint8_t idx = CAPS_LED_INDICES[i];
-        if (idx >= led_min && idx < led_max) {
-            RGB_MATRIX_INDICATOR_SET_COLOR(idx, caps_rgb.r, caps_rgb.g, caps_rgb.b);
-        }
-    }
-}
-// --- end caps list helpers ---
-
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     uint8_t top = get_highest_layer(layer_state | default_layer_state);
-
-    // Non-overriding path: when effects are running, paint Caps LEDs yellow if Caps is ON
-    paint_caps_yellow_if_on(led_min, led_max);
 
     if (top == LAYER_POINTER) {
         // White = saturation 0; keep current brightness
@@ -164,9 +135,6 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
         }
 
-        // Overwrite the solid layer color for Caps LEDs when Caps is ON
-        paint_caps_yellow_if_on(led_min, led_max);
-
         // Return true to fully override the active RGB effect with solid white.
         return true;
     } else if (top == LAYER_LOWER) {
@@ -178,9 +146,6 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
         }
 
-        // Overwrite the solid layer color for Caps LEDs when Caps is ON
-        paint_caps_yellow_if_on(led_min, led_max);
-
         // Override active RGB effect with solid green
         return true;
     } else if (top == LAYER_RAISE) {
@@ -191,9 +156,6 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         for (uint8_t i = led_min; i < led_max; i++) {
             rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
         }
-
-        // Overwrite the solid layer color for Caps LEDs when Caps is ON
-        paint_caps_yellow_if_on(led_min, led_max);
 
         // Override active RGB effect with solid purple
         return true;
