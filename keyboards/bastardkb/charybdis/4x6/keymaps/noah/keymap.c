@@ -162,4 +162,22 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     // If no layer matched, reset to default RGB effect (Set in config.h)
     return false;
 }
+
+void matrix_scan_user(void) {
+    static uint32_t last_activity_time = 0;
+    static bool     leds_off           = false;
+
+    // Update activity timer on any key press or mouse movement
+    if (matrix_has_changed() || (layer_state & (1 << LAYER_POINTER))) {
+        last_activity_time = timer_read32();
+        leds_off           = false;
+        rgb_matrix_set_suspend_state(false);
+    }
+
+    // Check if 10 minutes (600000ms) have passed without activity
+    if (!leds_off && timer_elapsed32(last_activity_time) > 6000) {
+        leds_off = true;
+        rgb_matrix_set_suspend_state(true);
+    }
+}
 #endif // RGB_MATRIX_ENABLE
