@@ -225,7 +225,7 @@ bool is_mouse_record_user(uint16_t keycode, keyrecord_t *record) {
  * ├────────────────────────┤                 ├────────────────────────┤
  *    3   4  11  12  19  23                     52  48  41  40  33  32
  * ╰────────────────────────╯                 ╰────────────────────────╯
- *                       26  27  28     53  54  XX Rightside Thumb have a mapping issue,
+ *                       26  27  28     53  54  XX Rightside Thumbkeys have a mapping issue,
  *                           25  24     55  XX
  *                     ╰────────────╯ ╰────────────╯
  *
@@ -274,9 +274,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     //        rgb_matrix_set_color(3, 0, 0, 255);
     //    }
 
-    rgb_matrix_set_color(58, 0, 0, 255);
-    rgb_matrix_set_color(57, 255, 0, 0);
-    rgb_matrix_set_color(56, 0, 255, 0);
+    //    rgb_matrix_set_color(32, 0, 0, 255);
 
     return true;
 }
