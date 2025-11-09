@@ -262,21 +262,9 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
     rgb_t base_rgb = hsv_to_rgb(hsv);
 
-    // 1) First: set all LEDs to the layer color
+    // set all LEDs to the layer color
     for (uint8_t i = led_min; i < led_max; i++) {
         rgb_matrix_set_color(i, base_rgb.r, base_rgb.g, base_rgb.b);
-    }
-
-    // 2) Then: special color for Caps key LED (override)
-    const uint8_t CAPS_LED = 3;
-
-    led_t led_state = host_keyboard_led_state();
-    if (led_state.caps_lock) {
-        // Caps ON → make it e.g. bright green
-        rgb_matrix_set_color(CAPS_LED, 0, 255, 0);
-    } else {
-        // Caps OFF → keep the layer color
-        rgb_matrix_set_color(CAPS_LED, 0, 255, 0);
     }
 
     return true;
