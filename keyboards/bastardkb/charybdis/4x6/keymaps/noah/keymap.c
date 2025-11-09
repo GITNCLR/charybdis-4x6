@@ -16,20 +16,15 @@
  */
 #include QMK_KEYBOARD_H
 
+// ------------------------------------------------------------
+// Keymap Layers & Custom Keycodes
+// ------------------------------------------------------------
 enum charybdis_keymap_layers {
     LAYER_BASE = 0,
     LAYER_LOWER,
     LAYER_RAISE,
     LAYER_POINTER,
 };
-
-/** \brief Automatically enable sniping-mode on the pointer layer. */
-#define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_RAISE
-
-#define LOWER MO(LAYER_LOWER)
-#define RAISE MO(LAYER_RAISE)
-#define PT_Z LT(LAYER_POINTER, KC_Z)
-#define PT_SLSH LT(LAYER_POINTER, KC_SLSH)
 
 enum custom_keycodes {
     MACRO_0 = SAFE_RANGE,
@@ -49,13 +44,6 @@ enum custom_keycodes {
     MACRO_14,
     MACRO_15,
 };
-
-#ifndef POINTING_DEVICE_ENABLE
-#    define DRGSCRL KC_NO
-#    define DPI_MOD KC_NO
-#    define S_D_MOD KC_NO
-#    define SNIPING KC_NO
-#endif // !POINTING_DEVICE_ENABLE
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -121,12 +109,74 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
+// ------------------------------------------------------------
+// Macros
+// ------------------------------------------------------------
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!record->event.pressed) {
+        // Only act on key press
+        return true;
+    }
+
+    switch (keycode) {
+        case MACRO_0:
+            // {+KC_LGUI} {-KC_LGUI}
+            // Just tap LGUI
+            SEND_STRING(SS_TAP(X_LGUI));
+            return false;
+
+        case MACRO_1:
+            // {+KC_LALT} {-KC_LALT}
+            SEND_STRING(SS_TAP(X_LALT));
+            return false;
+
+        case MACRO_2:
+            // {+KC_LALT}{+KC_LGUI} {-KC_LALT}{-KC_LGUI}
+            // Alt+Gui chord (no extra key)
+            SEND_STRING(SS_DOWN(X_LALT) SS_DOWN(X_LGUI) SS_UP(X_LGUI) SS_UP(X_LALT));
+            return false;
+
+        case MACRO_3:
+            // {+KC_LCTL}{+KC_LALT}{+KC_LGUI}c{-KC_LCTL}{-KC_LALT}{-KC_LGUI}
+            // Ctrl+Alt+Gui+C
+            SEND_STRING(SS_LCTL(SS_LALT(SS_LGUI("c"))));
+            return false;
+
+        case MACRO_4:
+            // Ctrl+Alt+Gui+X (same pattern)
+            SEND_STRING(SS_LCTL(SS_LALT(SS_LGUI("x"))));
+            return false;
+
+        case MACRO_10:
+            // {KC_LCTL,KC_LGUI,KC_SPC}
+            // chord Ctrl+Gui+Space
+            SEND_STRING(SS_DOWN(X_LCTL) SS_DOWN(X_LGUI) SS_TAP(X_SPACE) SS_UP(X_LGUI) SS_UP(X_LCTL));
+            return false;
+    }
+
+    return true;
+}
+
+// ------------------------------------------------------------
+// Pointing Device Stuff
+// ------------------------------------------------------------
+#ifndef POINTING_DEVICE_ENABLE
+#    define DRGSCRL KC_NO
+#    define DPI_MOD KC_NO
+#    define S_D_MOD KC_NO
+#    define SNIPING KC_NO
+#endif // !POINTING_DEVICE_ENABLE
+
 #ifdef POINTING_DEVICE_ENABLE
+
+// Automatically enable sniping-mode on the pointer layer.
+#    define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_RAISE
 
 #    ifdef CHARYBDIS_AUTO_SNIPING_ON_LAYER
 layer_state_t layer_state_set_user(layer_state_t state) {
     charybdis_set_pointer_sniping_enabled(layer_state_cmp(state, CHARYBDIS_AUTO_SNIPING_ON_LAYER));
 
+    // Manage Auto Mouse enabling/disabling based on layer
     uint8_t layer = get_highest_layer(state);
 
     switch (layer) {
@@ -163,9 +213,12 @@ bool is_mouse_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 #endif // POINTING_DEVICE_ENABLE
 
+// ------------------------------------------------------------
+// RGB Stuff
+// ------------------------------------------------------------
 #ifdef RGB_MATRIX_ENABLE
 /**
- * \brief LEDs index.
+ * LEDs index.
  *
  * ╭────────────────────────╮                 ╭────────────────────────╮
  *    0   7   8  15  16  20                     49  45  44  37  36  29
