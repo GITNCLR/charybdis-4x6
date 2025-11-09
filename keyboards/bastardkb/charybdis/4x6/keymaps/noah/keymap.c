@@ -145,6 +145,27 @@ bool is_mouse_record_user(uint16_t keycode, keyrecord_t *record) {
 #endif // POINTING_DEVICE_ENABLE
 
 #ifdef RGB_MATRIX_ENABLE
+/**
+ * \brief LEDs index.
+ *
+ * ╭────────────────────────╮                 ╭────────────────────────╮
+ *    0   7   8  15  16  20                     49  45  44  37  36  29
+ * ├────────────────────────┤                 ├────────────────────────┤
+ *    1   6   9  14  17  21                     50  46  43  38  35  30
+ * ├────────────────────────┤                 ├────────────────────────┤
+ *    2   5  10  13  18  22                     51  47  42  39  34  31
+ * ├────────────────────────┤                 ├────────────────────────┤
+ *    3   4  11  12  19  23                     52  48  41  40  33  32
+ * ╰────────────────────────╯                 ╰────────────────────────╯
+ *                       26  27  28     53  54  XX
+ *                           25  24     55  XX
+ *                     ╰────────────╯ ╰────────────╯
+ *
+ * Note: the LED config simulates 58 LEDs instead of the actual 56 to prevent
+ * confusion when testing LEDs during assembly when handedness is not set
+ * correctly.  Those fake LEDs are bound to the physical bottom-left corner.
+ */
+
 // ------------------------------------------------------------
 // RGB Matrix per-layer indicators
 // ------------------------------------------------------------
