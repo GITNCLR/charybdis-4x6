@@ -107,6 +107,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #    ifdef CHARYBDIS_AUTO_SNIPING_ON_LAYER
 layer_state_t layer_state_set_user(layer_state_t state) {
     charybdis_set_pointer_sniping_enabled(layer_state_cmp(state, CHARYBDIS_AUTO_SNIPING_ON_LAYER));
+
+    uint8_t layer = get_highest_layer(state);
+
+    switch (layer) {
+        case LAYER_RAISE:
+            set_auto_mouse_enable(false); // disable Auto Mouse
+            break;
+
+        default:
+            set_auto_mouse_enable(true); // enable it again
+            break;
+    }
     return state;
 }
 #    endif // CHARYBDIS_AUTO_SNIPING_ON_LAYER
@@ -130,27 +142,9 @@ bool is_mouse_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     return false;
 }
-
-layer_state_t layer_state_set_user(layer_state_t state) {
-    uint8_t layer = get_highest_layer(state);
-
-    switch (layer) {
-        case LAYER_RAISE:
-            automouse_enable(false); // disable Auto Mouse
-            break;
-
-        default:
-            automouse_enable(true); // enable it again
-            break;
-    }
-
-    return state;
-}
-
 #endif // POINTING_DEVICE_ENABLE
 
 #ifdef RGB_MATRIX_ENABLE
-
 // ------------------------------------------------------------
 // RGB Matrix per-layer indicators
 // ------------------------------------------------------------
