@@ -101,58 +101,53 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // Macros
 // ------------------------------------------------------------
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // 1) Keys that must react on BOTH press and release (pure hold)
-    if (keycode == VOLMODE) {
-        volmode_active = record->event.pressed;
-        if (!volmode_active) {
-            vol_acc      = 0;
-            vol_last_dir = 0;
-        }
-        return false;
+    // --- 1) Hold-type keys (react on press + release) ---
+    switch (keycode) {
+        case VOLMODE:
+            volmode_active = record->event.pressed;
+            if (!volmode_active) {
+                vol_acc      = 0;
+                vol_last_dir = 0;
+            }
+            return false;
+
+        case CARET_MODE:
+            caret_active = record->event.pressed;
+            if (!caret_active) {
+                dominant_axis = '\0';
+            }
+            return false;
     }
 
-    if (keycode == CARET_MODE) {
-        caret_active = record->event.pressed;
-        if (!caret_active) {
-            dominant_axis = '\0';
-        }
-        return false;
-    }
-
-    // 2) Everything else: act only on key press
+    // --- 2) Ignore releases for everything else ---
     if (!record->event.pressed) {
         return true;
     }
 
+    // --- 3) Macros (press-only) ---
     switch (keycode) {
-        case MACRO_0:
-            // Spotlight: GUI + Space
-            SEND_STRING(SS_DOWN(X_LGUI) SS_TAP(X_SPACE) SS_UP(X_LGUI));
+        case MACRO_0: // Spotlight: GUI + Space
+            SEND_STRING(SS_LGUI(SS_TAP(X_SPACE)));
             return false;
 
-        case MACRO_1:
-            // ChatGPT: Alt + Space
-            SEND_STRING(SS_DOWN(X_LALT) SS_TAP(X_SPACE) SS_UP(X_LALT));
+        case MACRO_1: // ChatGPT: Alt + Space
+            SEND_STRING(SS_LALT(SS_TAP(X_SPACE)));
             return false;
 
-        case MACRO_2:
-            // Terminal: Alt + GUI + Space
-            SEND_STRING(SS_DOWN(X_LALT) SS_DOWN(X_LGUI) SS_TAP(X_SPACE) SS_UP(X_LGUI) SS_UP(X_LALT));
+        case MACRO_2: // Terminal: Alt + GUI + Space
+            SEND_STRING(SS_LALT(SS_LGUI(SS_TAP(X_SPACE))));
             return false;
 
-        case MACRO_3:
-            // OCR copy on macOS: Ctrl+Alt+GUI+C
+        case MACRO_3: // OCR copy on macOS: Ctrl + Alt + GUI + C
             SEND_STRING(SS_LCTL(SS_LALT(SS_LGUI("c"))));
             return false;
 
-        case MACRO_4:
-            // Screenshot on macOS: Ctrl+Alt+GUI+X
+        case MACRO_4: // Screenshot on macOS: Ctrl + Alt + GUI + X
             SEND_STRING(SS_LCTL(SS_LALT(SS_LGUI("x"))));
             return false;
 
-        case MACRO_5:
-            // macOS Emoji picker: Ctrl+GUI+Space
-            SEND_STRING(SS_DOWN(X_LCTL) SS_DOWN(X_LGUI) SS_TAP(X_SPACE) SS_UP(X_LGUI) SS_UP(X_LCTL));
+        case MACRO_5: // Emoji picker: Ctrl + GUI + Space
+            SEND_STRING(SS_LCTL(SS_LGUI(SS_TAP(X_SPACE))));
             return false;
     }
 
@@ -209,13 +204,17 @@ bool is_mouse_record_user(uint16_t keycode, keyrecord_t *record) {
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     // Volume mode (held custom key) has top priority
-    if (volmode_active) return handle_volume_mode(mouse_report);
-
+    if (volmode_active) {
+        return handle_volume_mode(mouse_report);
+    }
     // Caret mode (held custom key) has second priority
-    if (caret_active) return handle_caret_mode(mouse_report);
-
+    else if (caret_active) {
+        return handle_caret_mode(mouse_report);
+    }
     // Default: pass through unchanged
-    return mouse_report;
+    else {
+        return mouse_report;
+    }
 }
 #endif // POINTING_DEVICE_ENABLE
 
