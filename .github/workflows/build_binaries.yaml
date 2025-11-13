@@ -78,13 +78,24 @@ jobs:
             TAG="latest"
             TITLE="Noah’s Charybdis 4x6 Layout"
             PRE_FLAG=""
+            LATEST_FLAG="--latest"
           else
             TAG="latest-$SAFE_BRANCH"
             TITLE="Charybdis 4x6 (${GITHUB_REF_NAME})"
             PRE_FLAG="--prerelease"
+            LATEST_FLAG="--latest=false"
           fi
 
-          echo "Editing release $TAG with title: $TITLE"
-          gh release edit "$TAG" \
-            --repo "$GITHUB_REPOSITORY" \
-            --title "$TITLE" $PRE_FLAG
+          echo "Editing or creating release $TAG with title: $TITLE"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            # Release exists: update it
+            gh release edit "$TAG" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "$TITLE" $PRE_FLAG $LATEST_FLAG
+          else
+            # Release does not exist yet: create it
+            gh release create "$TAG" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "$TITLE" $PRE_FLAG $LATEST_FLAG \
+              --generate-notes
+          fi
