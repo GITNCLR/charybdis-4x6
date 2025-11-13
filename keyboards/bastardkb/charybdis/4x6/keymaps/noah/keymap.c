@@ -150,7 +150,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 #ifdef POINTING_DEVICE_ENABLE
 
-// Automatically enable sniping-mode on the pointer layer.
+// Automatically enable sniping-mode on the chosen layer.
 #    define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_RAISE
 
 #    ifdef CHARYBDIS_AUTO_SNIPING_ON_LAYER

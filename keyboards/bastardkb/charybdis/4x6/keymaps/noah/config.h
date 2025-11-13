@@ -92,7 +92,7 @@
 #ifdef RGB_MATRIX_LED_COUNT
 #    undef RGB_MATRIX_LED_COUNT
 #endif
-#define RGB_MATRIX_LED_COUNT 58 // total number (example)
+#define RGB_MATRIX_LED_COUNT 58 // total number
 
 #ifdef RGB_MATRIX_SPLIT
 #    undef RGB_MATRIX_SPLIT
