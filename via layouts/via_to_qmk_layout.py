@@ -3,10 +3,9 @@ import json
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-VENDOR_JSON = SCRIPT_DIR / "charybdis.layout.json"
+VIA_JSON = SCRIPT_DIR / "charybdis.layout.json"
 
-# Mapping: index in LAYOUT(...) -> index in vendor (60-key) layer
-LAYOUT_FROM_VENDOR_INDEX = [
+LAYOUT_FROM_VIA_INDEX = [
     0,  1,  2,  3,  4,  5,   35, 34, 33, 32, 31, 30,
     6,  7,  8,  9, 10, 11,   41, 40, 39, 38, 37, 36,
    12, 13, 14, 15, 16, 17,   47, 46, 45, 44, 43, 42,
@@ -24,7 +23,7 @@ ROW_SLICES = [
     (53, 56),  # thumb row 2 (3 keys)
 ]
 
-# ASCII art (your wider version)
+# ASCII art
 ROW_COMMENTS = [
     "  // ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮ ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮",
     "  // ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤",
@@ -54,7 +53,6 @@ REPLACEMENTS = {
     "S(KC_0)":    "KC_RPRN",
     "S(KC_MINS)": "KC_UNDS",
 
-    # ADJUST layer → POINTER layer mapping
     "RESET": "QK_BOOT",
     "QK_CLEAR_EEPROM": "EE_CLR",
     "CUSTOM(0)": "DPI_MOD",
@@ -107,15 +105,15 @@ REPLACEMENTS = {
 def apply_replacements(token: str) -> str:
     return REPLACEMENTS.get(token, token)
 
-def load_vendor_layers(path: Path):
+def load_via_layers(path: Path):
     with path.open() as f:
         data = json.load(f)
     return data["layers"]
 
-def vendor_layer_to_layout_tokens(vendor_layer):
-    if len(vendor_layer) != 60:
-        raise ValueError(f"Expected 60 entries per layer, got {len(vendor_layer)}")
-    tokens = [apply_replacements(vendor_layer[i]) for i in LAYOUT_FROM_VENDOR_INDEX]
+def via_layer_to_layout_tokens(via_layer):
+    if len(via_layer) != 60:
+        raise ValueError(f"Expected 60 entries per layer, got {len(via_layer)}")
+    tokens = [apply_replacements(via_layer[i]) for i in LAYOUT_FROM_VIA_INDEX]
     if len(tokens) != 56:
         raise ValueError("Mapping should produce 56 tokens per layer")
     return tokens
@@ -174,7 +172,6 @@ def format_thumb_row1(row_tokens):
 
 def format_thumb_row2(row_tokens):
     inner = format_group(row_tokens, 3)
-    # no trailing comma here, just like your snippet
     return f"{INDENT_THUMB2}{inner}"
 
 def render_layer(layer_name, tokens):
@@ -196,14 +193,14 @@ def render_layer(layer_name, tokens):
     return "\n".join(out)
 
 def main():
-    vendor_layers = load_vendor_layers(VENDOR_JSON)
-    all_tokens = [vendor_layer_to_layout_tokens(v) for v in vendor_layers]
+    via_layers = load_via_layers(VIA_JSON)
+    all_tokens = [via_layer_to_layout_tokens(v) for v in via_layers]
 
     layer_names = [
         "LAYER_BASE",
         "LAYER_LOWER",
         "LAYER_RAISE",
-        "LAYER_POINTER",   # 4th layer
+        "LAYER_POINTER",
     ]
 
     for idx, tokens in enumerate(all_tokens):
