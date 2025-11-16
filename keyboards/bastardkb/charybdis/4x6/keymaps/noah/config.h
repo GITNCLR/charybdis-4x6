@@ -92,3 +92,12 @@
 #    undef AUTO_MOUSE_TIME
 #endif
 #define AUTO_MOUSE_TIME 1200 // ms to switch back after movement
+
+/* ────────────────────────────────
+ * High resolution scroll configuration
+ * ──────────────────────────────── */
+#define POINTING_DEVICE_HIRES_SCROLL_ENABLE
+#define POINTING_DEVICE_HIRES_SCROLL_MULTIPLIER 20
+#define CHARYBDIS_DRAGSCROLL_DPI 500
+#define CHARYBDIS_DRAGSCROLL_BUFFER_SIZE 0
+#define WHEEL_EXTENDED_REPORT true
