@@ -96,8 +96,9 @@
 /* ────────────────────────────────
  * High resolution scroll configuration
  * ──────────────────────────────── */
+#define CHARYBDIS_DRAGSCROLL_REVERSE_Y
 #define POINTING_DEVICE_HIRES_SCROLL_ENABLE
-#define POINTING_DEVICE_HIRES_SCROLL_MULTIPLIER 120
+// #define POINTING_DEVICE_HIRES_SCROLL_MULTIPLIER 120
 #define CHARYBDIS_DRAGSCROLL_DPI 100
-#define CHARYBDIS_DRAGSCROLL_BUFFER_SIZE 0
+#define CHARYBDIS_DRAGSCROLL_BUFFER_SIZE 6
 #define WHEEL_EXTENDED_REPORT true
