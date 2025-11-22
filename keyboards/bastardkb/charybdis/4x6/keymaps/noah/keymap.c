@@ -287,13 +287,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // ------------------------------------------------------------
 // Pointing Device Stuff
 // ------------------------------------------------------------
-#ifdef SPLIT_TRANSACTION_IDS_USER
+#ifdef POINTING_DEVICE_ENABLE
+
+#    ifdef SPLIT_TRANSACTION_IDS_USER // Auto Mouse RGB timer sync
 void keyboard_post_init_user(void) {
     automouse_rgb_post_init();
 }
-#endif
-
-#ifdef POINTING_DEVICE_ENABLE
+#    endif // SPLIT_TRANSACTION_IDS_USER
 
 // Automatically enable sniping-mode on the chosen layer.
 #    define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_RAISE
@@ -391,12 +391,13 @@ static const uint8_t layer_lower_mods[] = {4, 47};
 // ─── RGB HELPER SUMMARY ─────────────────────────────────────────────
 // set_led_color(i, color)        → set single LED by index (side-aware)
 // set_led_group(list, n, color)  → set non-contiguous LEDs
-// fill_led_range(from, to, col)  → fill continuous LED range
+// fill_led_range(from, to, color)  → fill continuous LED range
 // set_left_side(color)           → color all left-side LEDs
 // set_right_side(color)          → color all right-side LEDs
 // set_both_sides(color)          → color all LEDs on both halves
 //
 // Use this for color: hsv_to_rgb((hsv_t){.h = 180, .s = 255, .v = current_brightness})
+// Use this for setting a group: set_led_group(layer_raise_mods, sizeof(layer_raise_mods), hsv_to_rgb((hsv_t){.h = 180, .s = 255, .v = current_brightness}));
 // ───────────────────────────────────────────────────────────────────
 
 // ------------------------------------------------------------
@@ -418,10 +419,6 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             if (automouse_rgb_render(top)) {
                 break;
             }
-            hsv_t hsv = (hsv_t){.h = 0, .s = 0, .v = 75};
-            set_both_sides(hsv_to_rgb(hsv));
-            //            set_led_group(layer_raise_mods, sizeof(layer_raise_mods), hsv_to_rgb((hsv_t){.h = 180, .s = 255, .v = current_brightness}));
-            //            set_led_group(layer_lower_mods, sizeof(layer_lower_mods), hsv_to_rgb((hsv_t){.h = 169, .s = 255, .v = current_brightness}));
         } break;
 
         case LAYER_LOWER: {
