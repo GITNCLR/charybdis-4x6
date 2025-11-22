@@ -1,6 +1,7 @@
 #include QMK_KEYBOARD_H
 #include "rgb_helpers.h"
 #include "trackerball_helpers.h"
+#include "automouse_rgb.h"
 
 // ------------------------------------------------------------
 // Custom Keycodes & Keymap Layers
@@ -186,6 +187,10 @@ static void send_hold_variant(uint16_t keycode) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (IS_MOUSEKEY(keycode)) {
+        automouse_rgb_track_mousekey(record->event.pressed);
+    }
+
     // --- 1) Hold-type keys (react on press + release) ---
     switch (keycode) {
         case VOLMODE:
@@ -302,6 +307,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
             set_auto_mouse_enable(true); // enable it again
             break;
     }
+    automouse_rgb_track_layer_state(state);
     return state;
 }
 #    endif // CHARYBDIS_AUTO_SNIPING_ON_LAYER
@@ -317,24 +323,30 @@ bool is_mouse_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case SNIPING_MODE:
             // Treat SNIPING as a mouse key so it WON'T deactivate the auto mouse layer
+            automouse_rgb_track_mousekey(record->event.pressed);
             return true;
 
         case SNIPING_MODE_TOGGLE:
             // Treat SNIPING as a mouse key so it WON'T deactivate the auto mouse layer
+            automouse_rgb_track_mousekey(record->event.pressed);
             return true;
 
         case DRAGSCROLL_MODE:
             // Treat DRAGSCROLL as a mouse key so it WON'T deactivate the auto mouse layer
+            automouse_rgb_track_mousekey(record->event.pressed);
             return true;
 
         case DRAGSCROLL_MODE_TOGGLE:
             // Treat DRAGSCROLL as a mouse key so it WON'T deactivate the auto mouse layer
+            automouse_rgb_track_mousekey(record->event.pressed);
             return true;
     }
     return false;
 }
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+    automouse_rgb_track_pointing(mouse_report);
+
     // Volume mode (held custom key)
     if (volmode_active) {
         return handle_volume_mode(mouse_report);
@@ -403,6 +415,9 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
     switch (top) {
         case LAYER_POINTER: {
+            if (automouse_rgb_render(top)) {
+                break;
+            }
             hsv_t hsv = (hsv_t){.h = 0, .s = 0, .v = 75};
             set_both_sides(hsv_to_rgb(hsv));
             //            set_led_group(layer_raise_mods, sizeof(layer_raise_mods), hsv_to_rgb((hsv_t){.h = 180, .s = 255, .v = current_brightness}));
