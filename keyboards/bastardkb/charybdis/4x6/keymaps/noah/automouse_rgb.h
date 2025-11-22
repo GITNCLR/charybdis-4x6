@@ -19,9 +19,7 @@ typedef struct __attribute__((packed)) {
 
 // Utility to paint every LED regardless of half (master computes the whole frame).
 static inline void automouse_rgb_set_all(rgb_t color) {
-    for (uint8_t i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
-        rgb_matrix_set_color(i, color.r, color.g, color.b);
-    }
+    set_both_sides(color);
 }
 
 // Tunables for the countdown gradient and minimum visibility.
@@ -43,8 +41,14 @@ static inline void automouse_rgb_set_all(rgb_t color) {
 #    ifndef AUTOMOUSE_RGB_END_V
 #        define AUTOMOUSE_RGB_END_V 255
 #    endif
-#    ifndef AUTOMOUSE_RGB_HUE_LOCKED
-#        define AUTOMOUSE_RGB_HUE_LOCKED 180 // cyan when auto-mouse is locked on
+#    ifndef AUTOMOUSE_RGB_LOCKED_H
+#        define AUTOMOUSE_RGB_LOCKED_H 180 // purple when auto-mouse is locked on
+#    endif
+#    ifndef AUTOMOUSE_RGB_LOCKED_S
+#        define AUTOMOUSE_RGB_LOCKED_S 255 // full saturation when auto-mouse is locked on
+#    endif
+#    ifndef AUTOMOUSE_RGB_LOCKED_V
+#        define AUTOMOUSE_RGB_LOCKED_V 255 // moderate brightness when auto-mouse is locked on
 #    endif
 #    ifndef AUTOMOUSE_RGB_MIN_VALUE
 #        define AUTOMOUSE_RGB_MIN_VALUE 12 // keep LEDs visible even near timeout
@@ -60,7 +64,7 @@ static inline void automouse_rgb_set_all(rgb_t color) {
 static uint16_t automouse_rgb_last_activity = 0;
 static bool     automouse_rgb_armed         = false;
 #    ifdef SPLIT_TRANSACTION_IDS_USER
-static automouse_rgb_packet_t automouse_rgb_remote = {0};
+static automouse_rgb_packet_t automouse_rgb_remote    = {0};
 static automouse_rgb_packet_t automouse_rgb_last_sent = {0};
 #    endif
 
@@ -93,8 +97,8 @@ static inline void automouse_rgb_note_activity(void) {
 // Track pointer layer on/off so we can arm/disarm the countdown cleanly.
 static inline void automouse_rgb_track_layer_state(layer_state_t state) {
     static layer_state_t previous_state = 0;
-    bool                  now_on        = layer_state_cmp(state, get_auto_mouse_layer());
-    bool                  was_on        = layer_state_cmp(previous_state, get_auto_mouse_layer());
+    bool                 now_on         = layer_state_cmp(state, get_auto_mouse_layer());
+    bool                 was_on         = layer_state_cmp(previous_state, get_auto_mouse_layer());
 
     if (now_on && !was_on) {
         automouse_rgb_arm_timer();
@@ -206,7 +210,7 @@ static inline bool automouse_rgb_render(uint8_t top_layer) {
         return false;
     }
 
-    bool is_master = is_keyboard_master();
+    bool                   is_master = is_keyboard_master();
     automouse_rgb_packet_t pkt =
 #    ifdef SPLIT_TRANSACTION_IDS_USER
         is_master ? automouse_rgb_local_packet() : automouse_rgb_remote;
@@ -229,7 +233,7 @@ static inline bool automouse_rgb_render(uint8_t top_layer) {
 
     // When auto-mouse is locked (e.g. dragscroll toggle), pin to the lock color.
     if (pkt.flags & AUTOMOUSE_RGB_FLAG_LOCKED) {
-        hsv_t hsv = {.h = AUTOMOUSE_RGB_HUE_LOCKED, .s = 255, .v = base_value};
+        hsv_t hsv = {.h = AUTOMOUSE_RGB_LOCKED_H, .s = AUTOMOUSE_RGB_LOCKED_S, .v = AUTOMOUSE_RGB_LOCKED_V};
         automouse_rgb_set_all(hsv_to_rgb(hsv));
         return true;
     }
@@ -277,9 +281,15 @@ static inline bool automouse_rgb_render(uint8_t top_layer) {
 #else // defined(RGB_MATRIX_ENABLE) && defined(POINTING_DEVICE_AUTO_MOUSE_ENABLE)
 
 // No-op shims so callers can remain clean.
-static inline void automouse_rgb_track_layer_state(layer_state_t state) { (void)state; }
-static inline void automouse_rgb_track_pointing(report_mouse_t mouse_report) { (void)mouse_report; }
-static inline void automouse_rgb_track_mousekey(bool pressed) { (void)pressed; }
+static inline void automouse_rgb_track_layer_state(layer_state_t state) {
+    (void)state;
+}
+static inline void automouse_rgb_track_pointing(report_mouse_t mouse_report) {
+    (void)mouse_report;
+}
+static inline void automouse_rgb_track_mousekey(bool pressed) {
+    (void)pressed;
+}
 static inline void automouse_rgb_post_init(void) {}
 static inline bool automouse_rgb_render(uint8_t top_layer) {
     (void)top_layer;
