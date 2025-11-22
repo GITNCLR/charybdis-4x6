@@ -188,7 +188,6 @@ static inline bool automouse_rgb_render(uint8_t top_layer) {
 
     uint16_t remaining  = pkt.remaining;
     uint16_t timeout    = pkt.timeout ? pkt.timeout : automouse_rgb_timeout();
-    uint16_t timeout    = automouse_rgb_timeout();
     uint8_t  base_value = rgb_matrix_get_val();
 
     // Avoid divide-by-zero and keep a minimal pulse even if we never saw activity.
