@@ -117,6 +117,11 @@ static inline uint16_t automouse_rgb_time_remaining(void) {
 
 // Render a simple gradient countdown on the entire board. Returns true when it handled the layer.
 static inline bool automouse_rgb_render(uint8_t top_layer) {
+    if (this_is_left_half()) {
+        // Let the pointer side drive the whole frame to avoid stale timers on the non-pointer half.
+        return false;
+    }
+
     if (top_layer != get_auto_mouse_layer() || !automouse_rgb_is_enabled()) {
         return false;
     }
