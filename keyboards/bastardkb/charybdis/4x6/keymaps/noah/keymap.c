@@ -37,7 +37,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // clang-format off
   [LAYER_BASE] = LAYOUT(
   // ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮ ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-                   KC_ESC,              KC_1,              KC_2,              KC_3,              KC_4,              KC_5,                 KC_6,              KC_7,              KC_8,              KC_9,              KC_0,           KC_MINS,
+                  QK_GESC,              KC_1,              KC_2,              KC_3,              KC_4,              KC_5,                 KC_6,              KC_7,              KC_8,              KC_9,              KC_0,           KC_MINS,
   // ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
                    KC_TAB,              KC_Q,              KC_W,              KC_E,              KC_R,              KC_T,                 KC_Y,              KC_U,              KC_I,              KC_O,              KC_P,           KC_BSLS,
   // ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
@@ -67,7 +67,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [LAYER_RAISE] = LAYOUT(
   // ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮ ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-                  RGB_TOG,           XXXXXXX,           DPI_MOD,          DPI_RMOD,           S_D_MOD,          S_D_RMOD,              KC_MPLY,           KC_MNXT,           KC_MPRV,           KC_MUTE,           KC_VOLD,           KC_VOLU,
+                  XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,              KC_MPLY,           KC_MNXT,           KC_MPRV,           KC_MUTE,           KC_VOLD,           KC_VOLU,
   // ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
                   XXXXXXX,           G(KC_Q),           XXXXXXX,           G(KC_A),           XXXXXXX,           XXXXXXX,              MACRO_2,           G(KC_C),             KC_UP,           G(KC_V),           KC_BRID,           KC_BRIU,
   // ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
@@ -82,16 +82,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [LAYER_POINTER] = LAYOUT(
   // ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮ ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-                  XXXXXXX,           XXXXXXX,           DPI_MOD,          DPI_RMOD,           S_D_MOD,          S_D_RMOD,              XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,
+                  _______,           _______,           DPI_MOD,          DPI_RMOD,           S_D_MOD,          S_D_RMOD,              _______,           _______,           _______,           _______,           _______,           _______,
   // ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-                  XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,              XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,
+                  _______,           _______,           _______,           _______,           _______,           _______,              _______,           _______,           _______,           _______,           _______,           _______,
   // ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-         MT(MOD_LSFT,KC_CAPS),          XXXXXXX,          XXXXXXX,          XXXXXXX,          XXXXXXX,           XXXXXXX,              XXXXXXX,           XXXXXXX,        KC_MS_BTN3,           DRG_TOG,           SNP_TOG,           XXXXXXX,
+                  _______,           _______,           _______,           _______,           _______,           _______,              _______,           _______,        KC_MS_BTN3,           DRG_TOG,           SNP_TOG,           _______,
   // ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-                  XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,           XXXXXXX,              VOLMODE,        KC_MS_BTN1,        KC_MS_BTN2,           DRGSCRL,           _______,        CARET_MODE,
+                  _______,           _______,           _______,           _______,           _______,           _______,              VOLMODE,        KC_MS_BTN1,        KC_MS_BTN2,           DRGSCRL,           _______,        CARET_MODE,
   // ╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-                                                                           KC_LGUI,           XXXXXXX,           DRGSCRL,           XXXXXXX,            KC_ENT,
-                                                                                              XXXXXXX,           XXXXXXX,           KC_BSPC
+                                                                           KC_LGUI,           _______,           DRGSCRL,           _______,            KC_ENT,
+                                                                                              _______,           _______,           KC_BSPC
   //                                                                    ╰────────────────────────────────────────────────╯ ╰────────────────────────────────────────────────╯
   ),
     // clang-format on
@@ -100,6 +100,91 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // ------------------------------------------------------------
 // Macros
 // ------------------------------------------------------------
+static uint16_t tap_hold_timer;
+
+static void send_hold_variant(uint16_t keycode) {
+    switch (keycode) {
+        // Number row
+        case KC_1:
+            tap_code16(KC_EXLM);
+            break; // !
+        case KC_2:
+            tap_code16(KC_AT);
+            break; // @
+        case KC_3:
+            tap_code16(KC_HASH);
+            break; // #
+        case KC_4:
+            tap_code16(KC_DLR);
+            break; // $
+        case KC_5:
+            tap_code16(KC_PERC);
+            break; // %
+        case KC_6:
+            tap_code16(KC_CIRC);
+            break; // ^
+        case KC_7:
+            tap_code16(KC_AMPR);
+            break; // &
+        case KC_8:
+            tap_code16(KC_ASTR);
+            break; // *
+        case KC_9:
+            tap_code16(KC_LPRN);
+            break; // (
+        case KC_0:
+            tap_code16(KC_RPRN);
+            break; // )
+
+        // Punctuation row
+        case KC_MINS:
+            tap_code16(KC_UNDS);
+            break; // _
+        case KC_EQL:
+            tap_code16(KC_PLUS);
+            break; // +
+        case KC_LBRC:
+            tap_code16(KC_LCBR);
+            break; // {
+        case KC_RBRC:
+            tap_code16(KC_RCBR);
+            break; // }
+        case KC_BSLS:
+            tap_code16(KC_PIPE);
+            break; // |
+        case KC_GRV:
+            tap_code16(KC_TILD);
+            break; // ~
+
+        // Right-hand punctuation
+        case KC_SCLN:
+            tap_code16(KC_COLN);
+            break; // :
+        case KC_QUOT:
+            tap_code16(KC_DQUO);
+            break; // "
+        case KC_COMM:
+            tap_code16(KC_LABK);
+            break; // <
+        case KC_DOT:
+            tap_code16(KC_RABK);
+            break; // >
+
+        // Arrow keys with Alt modifier
+        case KC_LEFT:
+            tap_code16(A(KC_LEFT));
+            break; // Alt + Left Arrow
+        case KC_RIGHT:
+            tap_code16(A(KC_RIGHT));
+            break; // Alt + Right Arrow
+
+        // Fallback: just send the original unshifted key if we forgot a mapping
+        default:
+            tap_code(keycode);
+            break;
+    }
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // --- 1) Hold-type keys (react on press + release) ---
     switch (keycode) {
@@ -119,12 +204,52 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
     }
 
-    // --- 2) Ignore releases for everything else ---
+    // --- 2) Tap/Hold symbol & number keys (Custom Auto Shift) ---
+    switch (keycode) {
+        case KC_1:
+        case KC_2:
+        case KC_3:
+        case KC_4:
+        case KC_5:
+        case KC_6:
+        case KC_7:
+        case KC_8:
+        case KC_9:
+        case KC_0:
+        case KC_MINS:
+        case KC_EQL:
+        case KC_LBRC:
+        case KC_RBRC:
+        case KC_BSLS:
+        case KC_GRV:
+        case KC_SCLN:
+        case KC_QUOT:
+        case KC_COMM:
+        case KC_DOT:
+        case KC_LEFT:
+        case KC_RIGHT:
+            if (record->event.pressed) {
+                // key down: start timer, don't send anything yet
+                tap_hold_timer = timer_read();
+            } else {
+                // key up: decide tap vs hold
+                if (timer_elapsed(tap_hold_timer) < CUSTOM_TAP_HOLD_TERM) {
+                    // TAP: send normal version (1, 2, -, =, etc.)
+                    tap_code(keycode);
+                } else {
+                    // HOLD: send hold variant (Shifted symbol, Alt + Arrow, etc.)
+                    send_hold_variant(keycode);
+                }
+            }
+            return false;
+    }
+
+    // --- 3) Ignore releases for everything else ---
     if (!record->event.pressed) {
         return true;
     }
 
-    // --- 3) Macros (press-only) ---
+    // --- 4) Macros (press-only) ---
     switch (keycode) {
         case MACRO_0: // Spotlight: GUI + Space
             SEND_STRING(SS_LGUI(SS_TAP(X_SPACE)));
@@ -161,17 +286,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 // Automatically enable sniping-mode on the chosen layer.
 #    define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_RAISE
-
 #    ifdef CHARYBDIS_AUTO_SNIPING_ON_LAYER
 layer_state_t layer_state_set_user(layer_state_t state) {
     charybdis_set_pointer_sniping_enabled(layer_state_cmp(state, CHARYBDIS_AUTO_SNIPING_ON_LAYER));
 
-    // Manage Auto Mouse enabling/disabling based on layer
+    // Manage Auto Mouse enabling/disabling based on layer to avoid conflicts with sniping
     uint8_t layer = get_highest_layer(state);
 
     switch (layer) {
         case LAYER_RAISE:
-            set_auto_mouse_enable(false); // disable Auto Mouse
+            set_auto_mouse_enable(false); // disable Auto Mouse when in sniping layer
             break;
 
         default:
@@ -184,8 +308,8 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 #    ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
 void pointing_device_init_user(void) {
-    set_auto_mouse_layer(LAYER_POINTER); // use your pointer layer
-    set_auto_mouse_enable(true);         // MUST be enabled to work
+    set_auto_mouse_layer(LAYER_POINTER); // set default pointer layer
+    set_auto_mouse_enable(true);         // enable Auto Mouse by default
 }
 #    endif // POINTING_DEVICE_AUTO_MOUSE_ENABLE
 
@@ -211,11 +335,11 @@ bool is_mouse_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    // Volume mode (held custom key) has top priority
+    // Volume mode (held custom key)
     if (volmode_active) {
         return handle_volume_mode(mouse_report);
     }
-    // Caret mode (held custom key) has second priority
+    // Caret mode (held custom key)
     else if (caret_active) {
         return handle_caret_mode(mouse_report);
     }
@@ -242,8 +366,8 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
  * ├────────────────────────┤                 ├────────────────────────┤
  *    3   4  11  12  19  23                     52  48  41  40  33  32
  * ╰────────────────────────╯                 ╰────────────────────────╯
- *                       26  27  28     53  54
- *                           25  24     55
+ *                       26  27  28     53  54  XX
+ *                           25  24     55  XX
  *                     ╰────────────╯ ╰────────────╯
  *
  * 0–28  → left half
