@@ -7,7 +7,6 @@
 #    include "rgb_helpers.h"
 #    ifdef SPLIT_TRANSACTION_IDS_USER
 #        include "transactions.h"
-#        include "transactions_user.h"
 #    endif
 
 typedef struct __attribute__((packed)) {

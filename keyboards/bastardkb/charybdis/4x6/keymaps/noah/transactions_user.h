@@ -1,5 +1,2 @@
 #pragma once
-
-enum user_transaction_ids {
-    PUT_AUTOMOUSE_RGB,
-};
+// Transaction IDs are injected via SPLIT_TRANSACTION_IDS_USER in config.h.
