@@ -5,6 +5,9 @@
 #    include <string.h>
 #    include "pointing_device_auto_mouse.h"
 #    include "rgb_helpers.h"
+#    ifdef SPLIT_TRANSACTION_IDS_USER
+#        include "transactions.h"
+#    endif
 #    define AUTOMOUSE_RGB_FLAG_LOCKED 0x01
 #    define AUTOMOUSE_RGB_FLAG_ARMED 0x02
 
@@ -38,6 +41,9 @@ static inline void automouse_rgb_set_all(rgb_t color) {
 // Local tracker for the last time the auto-mouse timer was reset.
 static uint16_t automouse_rgb_last_activity = 0;
 static bool     automouse_rgb_armed         = false;
+#    ifdef SPLIT_TRANSACTION_IDS_USER
+static automouse_rgb_packet_t automouse_rgb_remote = {0};
+#    endif
 
 static inline bool automouse_rgb_is_enabled(void) {
     return get_auto_mouse_enable();
@@ -133,7 +139,29 @@ static inline automouse_rgb_packet_t automouse_rgb_local_packet(void) {
     return p;
 }
 
+#    ifdef SPLIT_TRANSACTION_IDS_USER
+static inline void automouse_rgb_broadcast(const automouse_rgb_packet_t *pkt) {
+    transaction_rpc_send(PUT_AUTOMOUSE_RGB, sizeof(*pkt), pkt);
+}
+
+static inline void automouse_rgb_slave_rpc(uint8_t initiator2target_buffer_size, const void *initiator2target_buffer, uint8_t target2initiator_buffer_size, void *target2initiator_buffer) {
+    (void)target2initiator_buffer_size;
+    (void)target2initiator_buffer;
+    if (initiator2target_buffer_size < sizeof(automouse_rgb_packet_t)) {
+        return;
+    }
+    memcpy(&automouse_rgb_remote, initiator2target_buffer, sizeof(automouse_rgb_packet_t));
+}
+
+static inline void automouse_rgb_post_init(void) {
+    transaction_register_rpc(PUT_AUTOMOUSE_RGB, automouse_rgb_slave_rpc);
+}
+#    else
+static inline void automouse_rgb_broadcast(const automouse_rgb_packet_t *pkt) {
+    (void)pkt;
+}
 static inline void automouse_rgb_post_init(void) {}
+#    endif
 
 // Render a simple gradient countdown on the entire board. Returns true when it handled the layer.
 static inline bool automouse_rgb_render(uint8_t top_layer) {
@@ -141,12 +169,13 @@ static inline bool automouse_rgb_render(uint8_t top_layer) {
         return false;
     }
 
-    if (!is_keyboard_master()) {
-        // Only master renders; split RGB pushes the frame.
-        return false;
-    }
-
-    automouse_rgb_packet_t pkt = automouse_rgb_local_packet();
+    bool is_master = is_keyboard_master();
+    automouse_rgb_packet_t pkt =
+#    ifdef SPLIT_TRANSACTION_IDS_USER
+        is_master ? automouse_rgb_local_packet() : automouse_rgb_remote;
+#    else
+        automouse_rgb_local_packet();
+#    endif
 
     uint16_t remaining  = pkt.remaining;
     uint16_t timeout    = pkt.timeout ? pkt.timeout : automouse_rgb_timeout();
@@ -175,6 +204,11 @@ static inline bool automouse_rgb_render(uint8_t top_layer) {
     hsv_t    hsv      = {.h = hue, .s = 255, .v = value < AUTOMOUSE_RGB_MIN_VALUE ? AUTOMOUSE_RGB_MIN_VALUE : value};
 
     automouse_rgb_set_all(hsv_to_rgb(hsv));
+
+    if (is_master) {
+        automouse_rgb_broadcast(&pkt);
+    }
+
     return true;
 }
 
