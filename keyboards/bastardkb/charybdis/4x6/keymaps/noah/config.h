@@ -85,6 +85,7 @@
 /* Auto pointer layer on movement + 16-bit motion reports. */
 #    define POINTING_DEVICE_AUTO_MOUSE_ENABLE
 #    define MOUSE_EXTENDED_REPORT
+#    define SPLIT_POINTING_ENABLE
 #endif
 
 #ifdef AUTO_MOUSE_TIME
