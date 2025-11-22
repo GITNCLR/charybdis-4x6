@@ -25,17 +25,35 @@ static inline void automouse_rgb_set_all(rgb_t color) {
 }
 
 // Tunables for the countdown gradient and minimum visibility.
-#    ifndef AUTOMOUSE_RGB_HUE_FULL
-#        define AUTOMOUSE_RGB_HUE_FULL 85 // green-ish when plenty of time remains
+#    ifndef AUTOMOUSE_RGB_START_H
+#        define AUTOMOUSE_RGB_START_H 0
 #    endif
-#    ifndef AUTOMOUSE_RGB_HUE_EMPTY
-#        define AUTOMOUSE_RGB_HUE_EMPTY 0 // red when about to time out
+#    ifndef AUTOMOUSE_RGB_START_S
+#        define AUTOMOUSE_RGB_START_S 0
+#    endif
+#    ifndef AUTOMOUSE_RGB_START_V
+#        define AUTOMOUSE_RGB_START_V 75
+#    endif
+#    ifndef AUTOMOUSE_RGB_END_H
+#        define AUTOMOUSE_RGB_END_H 0
+#    endif
+#    ifndef AUTOMOUSE_RGB_END_S
+#        define AUTOMOUSE_RGB_END_S 255
+#    endif
+#    ifndef AUTOMOUSE_RGB_END_V
+#        define AUTOMOUSE_RGB_END_V 255
 #    endif
 #    ifndef AUTOMOUSE_RGB_HUE_LOCKED
 #        define AUTOMOUSE_RGB_HUE_LOCKED 180 // cyan when auto-mouse is locked on
 #    endif
 #    ifndef AUTOMOUSE_RGB_MIN_VALUE
 #        define AUTOMOUSE_RGB_MIN_VALUE 12 // keep LEDs visible even near timeout
+#    endif
+#    ifndef AUTOMOUSE_RGB_DEAD_TIME_NUM
+#        define AUTOMOUSE_RGB_DEAD_TIME_NUM 1 // numerator of dead-time fraction (e.g. 1/3)
+#    endif
+#    ifndef AUTOMOUSE_RGB_DEAD_TIME_DEN
+#        define AUTOMOUSE_RGB_DEAD_TIME_DEN 3 // denominator of dead-time fraction
 #    endif
 
 // Local tracker for the last time the auto-mouse timer was reset.
@@ -216,11 +234,36 @@ static inline bool automouse_rgb_render(uint8_t top_layer) {
         return true;
     }
 
-    // Map remaining time to hue/value for a quick visual countdown.
-    uint8_t  value    = (uint8_t)(((uint32_t)remaining * base_value) / timeout);
-    int16_t  hue_span = (int16_t)AUTOMOUSE_RGB_HUE_FULL - (int16_t)AUTOMOUSE_RGB_HUE_EMPTY;
-    uint8_t  hue      = (uint8_t)((int16_t)AUTOMOUSE_RGB_HUE_EMPTY + (hue_span * (int16_t)remaining) / (int16_t)timeout);
-    hsv_t    hsv      = {.h = hue, .s = 255, .v = value < AUTOMOUSE_RGB_MIN_VALUE ? AUTOMOUSE_RGB_MIN_VALUE : value};
+    // Map remaining time to hue/value for a quick visual countdown with a dead-time window.
+    uint16_t dead_time   = (timeout * AUTOMOUSE_RGB_DEAD_TIME_NUM) / AUTOMOUSE_RGB_DEAD_TIME_DEN;
+    uint16_t active_span = (timeout > dead_time) ? (timeout - dead_time) : 1;
+
+    hsv_t start = {.h = AUTOMOUSE_RGB_START_H, .s = AUTOMOUSE_RGB_START_S, .v = AUTOMOUSE_RGB_START_V};
+    hsv_t end   = {.h = AUTOMOUSE_RGB_END_H, .s = AUTOMOUSE_RGB_END_S, .v = AUTOMOUSE_RGB_END_V};
+
+    if (start.v > base_value) start.v = base_value;
+    if (end.v > base_value) end.v = base_value;
+
+    uint16_t elapsed = timeout > remaining ? (timeout - remaining) : 0;
+    uint16_t prog    = (elapsed <= dead_time) ? 0 : (elapsed - dead_time);
+
+    uint8_t value = end.v;
+    uint8_t hue   = end.h;
+    uint8_t sat   = end.s;
+
+    if (prog == 0) {
+        value = start.v;
+        hue   = start.h;
+        sat   = start.s;
+    } else {
+        uint32_t t = (uint32_t)prog * 255 / active_span; // 0-255 lerp factor
+        // linear interpolation per channel
+        hue   = start.h + (uint8_t)(((int16_t)end.h - (int16_t)start.h) * t / 255);
+        sat   = start.s + (uint8_t)(((int16_t)end.s - (int16_t)start.s) * t / 255);
+        value = start.v + (uint8_t)(((int16_t)end.v - (int16_t)start.v) * t / 255);
+    }
+
+    hsv_t hsv = {.h = hue, .s = sat, .v = value < AUTOMOUSE_RGB_MIN_VALUE ? AUTOMOUSE_RGB_MIN_VALUE : value};
 
     automouse_rgb_set_all(hsv_to_rgb(hsv));
 
