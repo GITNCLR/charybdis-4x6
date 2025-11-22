@@ -218,9 +218,8 @@ static inline bool automouse_rgb_render(uint8_t top_layer) {
         automouse_rgb_local_packet();
 #    endif
 
-    uint16_t remaining  = pkt.remaining;
-    uint16_t timeout    = pkt.timeout ? pkt.timeout : automouse_rgb_timeout();
-    uint8_t  base_value = rgb_matrix_get_val();
+    uint16_t remaining = pkt.remaining;
+    uint16_t timeout   = pkt.timeout ? pkt.timeout : automouse_rgb_timeout();
 
     // Avoid divide-by-zero and keep a minimal pulse even if we never saw activity.
     if (!timeout) {
@@ -231,22 +230,26 @@ static inline bool automouse_rgb_render(uint8_t top_layer) {
         remaining = timeout;
     }
 
+    // Define start, end, and locked colors in HSV space.
+    hsv_t start  = {.h = AUTOMOUSE_RGB_START_H, .s = AUTOMOUSE_RGB_START_S, .v = AUTOMOUSE_RGB_START_V};
+    hsv_t end    = {.h = AUTOMOUSE_RGB_END_H, .s = AUTOMOUSE_RGB_END_S, .v = AUTOMOUSE_RGB_END_V};
+    hsv_t locked = {.h = AUTOMOUSE_RGB_LOCKED_H, .s = AUTOMOUSE_RGB_LOCKED_S, .v = AUTOMOUSE_RGB_LOCKED_V};
+
+    // Clamp to current brightness setting.
+    uint8_t base_value = rgb_matrix_get_val();
+    if (start.v > base_value) start.v = base_value;
+    if (end.v > base_value) end.v = base_value;
+    if (locked.v > base_value) locked.v = base_value;
+
     // When auto-mouse is locked (e.g. dragscroll toggle), pin to the lock color.
     if (pkt.flags & AUTOMOUSE_RGB_FLAG_LOCKED) {
-        hsv_t hsv = {.h = AUTOMOUSE_RGB_LOCKED_H, .s = AUTOMOUSE_RGB_LOCKED_S, .v = AUTOMOUSE_RGB_LOCKED_V};
-        automouse_rgb_set_all(hsv_to_rgb(hsv));
+        automouse_rgb_set_all(hsv_to_rgb(locked));
         return true;
     }
 
     // Map remaining time to hue/value for a quick visual countdown with a dead-time window.
     uint16_t dead_time   = (timeout * AUTOMOUSE_RGB_DEAD_TIME_NUM) / AUTOMOUSE_RGB_DEAD_TIME_DEN;
     uint16_t active_span = (timeout > dead_time) ? (timeout - dead_time) : 1;
-
-    hsv_t start = {.h = AUTOMOUSE_RGB_START_H, .s = AUTOMOUSE_RGB_START_S, .v = AUTOMOUSE_RGB_START_V};
-    hsv_t end   = {.h = AUTOMOUSE_RGB_END_H, .s = AUTOMOUSE_RGB_END_S, .v = AUTOMOUSE_RGB_END_V};
-
-    if (start.v > base_value) start.v = base_value;
-    if (end.v > base_value) end.v = base_value;
 
     uint16_t elapsed = timeout > remaining ? (timeout - remaining) : 0;
     uint16_t prog    = (elapsed <= dead_time) ? 0 : (elapsed - dead_time);
