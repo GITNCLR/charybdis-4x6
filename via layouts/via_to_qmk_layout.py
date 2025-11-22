@@ -52,7 +52,8 @@ REPLACEMENTS = {
     "S(KC_9)":    "KC_LPRN",
     "S(KC_0)":    "KC_RPRN",
     "S(KC_MINS)": "KC_UNDS",
-
+    "KC_GESC":    "QK_GESC",
+    
     "RESET": "QK_BOOT",
     "QK_CLEAR_EEPROM": "EE_CLR",
     "CUSTOM(0)": "DPI_MOD",
